@@ -61,7 +61,7 @@ load_songplays_fact_table= LoadFactOperator(
     task_id="Load_songplays_fact_table",
     dag=dag,
     conn_id="redshift",
-    table="songplay",
+    table="songplays",
     sql="songplay_table_insert",
     append_only=False
 )
@@ -70,7 +70,7 @@ load_songs_dimension_table= LoadDimensionOperator(
     task_id="Load_song_dim_table",
     dag=dag,
     conn_id="redshift",
-    table="song",
+    table="songs",
     sql="song_table_insert",
     append_only=False
 )
@@ -88,7 +88,7 @@ load_artist_dimension_table= LoadDimensionOperator(
     task_id="Load_artsit_dim_table",
     dag=dag,
     redshift_conn_id="redshift",
-    table="artist",
+    table="artists",
     sql="artist_table_insert",
     append_only=False
 )
@@ -108,9 +108,9 @@ run_quality_checks=DataQualityOperator(
     redshift_conn_id='redshift',
     tables=["songplay","users", "song", "artist", "time"]
 )
-    
+
 end_operator = DummyOperator(task_id='Stop_execution',  dag=dag)
-#Task Dependecies -- 
+#Task Dependecies --
 start_operator >> create_tables
 
 create_tables >> stage_events_to_redshift >> load_songplays_fact_table

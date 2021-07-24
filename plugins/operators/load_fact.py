@@ -25,7 +25,7 @@ class LoadFactOperator(BaseOperator):
         # Check to append or delete and instart all new.
         if not self.append_only:
             self.log.info("Deleting all entries from {} table".format(self.table))
-            redshift.run("DELETE FROM {} ".format(self.table))
+            redshift.run("DELETE FROM {}".format(self.table))
         self.log.info("Inserting data from staging to fact table {} ..".format(self.table))
         insert_sql_query = getattr(SqlQueries,self.sql).format(self.table)
         redshift.run(insert_sql_query)
