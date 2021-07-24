@@ -13,7 +13,7 @@ class StageToRedshiftOperator(BaseOperator):
         {} 'auto';
     """
     copy_sql_date = """
-        COPY {} FROM '{}'
+        COPY {} FROM '{}/{}/{}/'
         ACCESS_KEY_ID '{}'
         SECRETE_ACCESS_KEY '{}'
         REGION '{}'
@@ -49,28 +49,24 @@ class StageToRedshiftOperator(BaseOperator):
         #execution_date to load data for specific dates.
         if self.execution_date:
             formatted_sql = StageToRedshiftOperator.copy_sql_date.format(
-                self.table, 
-                self.s3_path, 
+                self.table,
+                self.s3_path,
                 self.execution_date.strftime("%Y"),
                 self.execution_date.strftime("%d"),
                 credentials.access_key,
-                credentials.secret_key, 
+                credentials.secret_key,
                 self.region,
                 self.data_format,
                 self.execution_date
             )
         else:
             formatted_sql = StageToRedshiftOperator.copy_sql.format(
-                self.table, 
-                self.s3_path, 
+                self.table,
+                self.s3_path,
                 credentials.access_key,
-                credentials.secret_key, 
+                credentials.secret_key,
                 self.region,
                 self.data_format,
                 self.execution_date
             )
         redshift.run(formatted_sql)
-
-
-
-

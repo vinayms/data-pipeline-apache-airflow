@@ -18,14 +18,12 @@ class DataQualityOperator(BaseOperator):
 
     def execute(self, context):
         redshift= PostgresHook(postgres_conn_id=self.redshift_conn_id)
+        self.log.info("Starting data quality checks for tables {}".format(self.tables))
         for table in self.tables:
             records = redshift.get_records("SELECT COUNT(*) FROM {}".format(table))
             if len(records) < 1 or len(records[0])<1:
                 self.log.error("The {} has no results ".format(table))
                 raise ValueError("Data quality check failed for {}. No results retruned".format(table))
-                
+
             num_records = records[0][0]
             self.log.info("Data quality check pass for {} table total records {}".format(table, num_records))
-        
-        
-        

@@ -16,8 +16,8 @@ class LoadDimensionOperator(BaseOperator):
 
         super(LoadDimensionOperator, self).__init__(*args, **kwargs)
         self.conn_id = conn_id
-        self.table=table,
-        self.sql=sql,
+        self.table=table
+        self.sql=sql
         self.append_only=append_only
 
     def execute(self, context):
