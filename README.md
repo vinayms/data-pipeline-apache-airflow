@@ -49,12 +49,12 @@ The final operator to create is the data quality operator, which is used to run 
 
     To run the project just start Apache airflow - $sh /opt/airflow/start.sh
 ### Airflow admin screen
-![](https://github.com/vinayms/data-pipeline-apache-airflow/tree/main/img/Arflow_Udacity_Project_home_screen.png)
+![Apache Airflow DAG Project home screen](https://github.com/vinayms/data-pipeline-apache-airflow/tree/main/img/Arflow_Udacity_Project_home_screen.png)
 
 ### DAG Graph View
 
-![](https://github.com/vinayms/data-pipeline-apache-airflow/tree/main/img/Airflow_Project_Pipeline_DAG_GraphView.png)
+![Project Workflow DAG Graph View](https://github.com/vinayms/data-pipeline-apache-airflow/tree/main/img/Airflow_Project_Pipeline_DAG_GraphView.png)
 
 ### DAG Tree View
 
-![](https://github.com/vinayms/data-pipeline-apache-airflow/tree/main/img/Airflow_Project_Pipeline_DAG_TreeView.png)
+![Project Workflow DAG Tree View](https://github.com/vinayms/data-pipeline-apache-airflow/tree/main/img/Airflow_Project_Pipeline_DAG_TreeView.png)
