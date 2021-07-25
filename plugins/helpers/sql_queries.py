@@ -1,28 +1,28 @@
 class SqlQueries:
     songplay_table_insert = ("""
         INSERT INTO {} (
+            playid,
             start_time,
-            user_id,
+            userid,
             level,
-            song_id,
-            artist_id,
-            session_id,
+            songid,
+            artistid,
+            sessionid,
             location,
             user_agent
         )
         SELECT
-                md5(events.sessionid || events.start_time) songplay_id,
-                events.start_time,
-                events.userid,
-                events.level,
-                songs.song_id,
-                songs.artist_id,
-                events.sessionid,
-                events.location,
-                events.useragent
-                FROM (SELECT TIMESTAMP 'epoch' + ts/1000 * interval '1 second' AS start_time, *
-            FROM staging_events
-            WHERE page='NextSong') events
+                md5(events.start_time),
+                events.start_time, 
+                events.userId, 
+                events.level, 
+                songs.song_id, 
+                songs.artist_id, 
+                events.sessionId, 
+                events.location, 
+                events.userAgent
+                FROM (SELECT TIMESTAMP 'epoch' + ts/1000 * interval '1 second' AS start_time, * FROM staging_events 
+                        WHERE page='NextSong' AND userId IS NOT NULL) events
             LEFT JOIN staging_songs songs
             ON events.song = songs.title
                 AND events.artist = songs.artist_name
@@ -31,53 +31,53 @@ class SqlQueries:
 
     user_table_insert = ("""
         INSERT INTO {} (
-            user_id,
+            userid,
             first_name,
             last_name,
             gender,
             level
         )
-
-        SELECT
-            distinct userid,
-            firstname,
-            lastname,
-            gender,
+    
+        SELECT 
+            distinct userId, 
+            firstName, 
+            lastName, 
+            gender, 
             level
         FROM staging_events
-        WHERE page='NextSong'
+        WHERE page='NextSong' AND userId IS NOT NULL
     """)
 
     song_table_insert = ("""
         INSERT INTO {} (
-            song_id,
+            songid,
             title,
-            artist_id,
-            year
+            artistid,
+            year,
             duration
         )
-        SELECT
-            distinct song_id,
-            title,
-            artist_id,
-            year,
+        SELECT 
+            distinct song_id, 
+            title, 
+            artist_id, 
+            year, 
             duration
         FROM staging_songs
     """)
 
     artist_table_insert = ("""
         INSERT INTO {} (
-            artist_id,
+            artistid,
             name,
             location,
             latitude,
             longitude
         )
-        SELECT
-            distinct artist_id,
-            artist_name,
-            artist_location,
-            artist_latitude,
+        SELECT 
+            distinct artist_id, 
+            artist_name, 
+            artist_location, 
+            artist_latitude, 
             artist_longitude
         FROM staging_songs
     """)
@@ -92,12 +92,12 @@ class SqlQueries:
             year,
             weekday
         )
-        SELECT start_time,
-            extract(hour from start_time),
-            extract(day from start_time),
-            extract(week from start_time),
-            extract(month from start_time),
-            extract(year from start_time),
+        SELECT start_time, 
+            extract(hour from start_time), 
+            extract(day from start_time), 
+            extract(week from start_time), 
+            extract(month from start_time), 
+            extract(year from start_time), 
             extract(dayofweek from start_time)
         FROM songplays
     """)

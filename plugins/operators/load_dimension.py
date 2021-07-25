@@ -1,6 +1,7 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from helpers import SqlQueries
 
 class LoadDimensionOperator(BaseOperator):
 
@@ -24,6 +25,6 @@ class LoadDimensionOperator(BaseOperator):
         redshift = PostgresHook(postgres_conn_id=self.conn_id)
         if not self.append_only:
             redshift.run("DELETE FROM {}".format(self.table))
-        self.log.info('Inserting into to dimension table {} '.format(table))
+        self.log.info('Inserting into to dimension table {} '.format(self.table))
         redshift.run(getattr(SqlQueries, self.sql).format(self.table))
-        self.log.info('Inserting into to dimension table {} completed '.format(table))
+        self.log.info('Inserting into to dimension table {} completed '.format(self.table))

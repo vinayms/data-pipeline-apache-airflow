@@ -1,6 +1,7 @@
 from airflow.hooks.postgres_hook import PostgresHook
 from airflow.models import BaseOperator
 from airflow.utils.decorators import apply_defaults
+from helpers import SqlQueries
 
 class LoadFactOperator(BaseOperator):
 
@@ -26,7 +27,7 @@ class LoadFactOperator(BaseOperator):
         if not self.append_only:
             self.log.info("Deleting all entries from {} table".format(self.table))
             redshift.run("DELETE FROM {}".format(self.table))
-        self.log.info("Inserting data from staging to fact table {} ..".format(self.table))
+        self.log.info("Inserting data from staging to fact table {} ..".format(self.table))   
         insert_sql_query = getattr(SqlQueries,self.sql).format(self.table)
         redshift.run(insert_sql_query)
         self.log.info("Inserting to {} table completed".format(self.table))

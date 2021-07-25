@@ -5,68 +5,37 @@ from airflow.utils.decorators import apply_defaults
 
 class StageToRedshiftOperator(BaseOperator):
     ui_color = '#358140'
-    copy_sql = """
-        COPY {} FROM '{}'
-        ACCESS_KEY_ID '{}'
-        SECRET_ACCESS_KEY '{}'
-        REGION '{}'
-        {} 'auto';
-    """
-    copy_sql_date = """
-        COPY {} FROM '{}/{}/{}/'
-        ACCESS_KEY_ID '{}'
-        SECRETE_ACCESS_KEY '{}'
-        REGION '{}'
-    """
 
     @apply_defaults
     def __init__(self,
                  redshift_conn_id = "",
                  aws_conn_id="",
                  table = "",
-                 s3_path = "",
+                 s3_bucket = "",
+                 s3_key = "",
                  region= "us-west-2",
                  data_format = "",
+                 json_path ="",
                  *args, **kwargs):
 
         super(StageToRedshiftOperator, self).__init__(*args, **kwargs)
         self.redshift_conn_id = redshift_conn_id
         self.aws_conn_id = aws_conn_id
         self.table = table
-        self.s3_path = s3_path
+        self.s3_bucket = s3_bucket
+        self.s3_key = s3_key
         self.region = region
         self.data_format = data_format
+        self.json_path = json_path
         self.execution_date = kwargs.get('execution_date')
 
     def execute(self, context):
         aws = AwsHook(self.aws_conn_id)
         credentials = aws.get_credentials()
         redshift = PostgresHook(postgres_conn_id=self.redshift_conn_id)
-        self.log.info("Deleting data from destination Redshift table")
-        # Clear data before loading to stage
-        redshift.run("DELETE FROM {}".format(self.table))
-        self.log.info("Started copying data from S3 to Redshift..")
-        #execution_date to load data for specific dates.
-        if self.execution_date:
-            formatted_sql = StageToRedshiftOperator.copy_sql_date.format(
-                self.table,
-                self.s3_path,
-                self.execution_date.strftime("%Y"),
-                self.execution_date.strftime("%d"),
-                credentials.access_key,
-                credentials.secret_key,
-                self.region,
-                self.data_format,
-                self.execution_date
-            )
-        else:
-            formatted_sql = StageToRedshiftOperator.copy_sql.format(
-                self.table,
-                self.s3_path,
-                credentials.access_key,
-                credentials.secret_key,
-                self.region,
-                self.data_format,
-                self.execution_date
-            )
-        redshift.run(formatted_sql)
+        redshift.run(f"DELETE FROM {self.table}")
+        self.s3_key = self.s3_key.format(**context)
+        s3_path = f"s3://{self.s3_bucket}/{self.s3_key}"
+        self.log.info("Copying data from {} ".format(s3_path))
+        redshift.run(f"COPY {self.table} FROM '{s3_path}' ACCESS_KEY_ID '{credentials.access_key}' \
+            SECRET_ACCESS_KEY '{credentials.secret_key}' FORMAT AS JSON '{self.json_path}'")

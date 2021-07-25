@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS public.artists (
 	artistid varchar(256) NOT NULL,
 	name varchar(256),
 	location varchar(256),
-	lattitude numeric(18,0),
+	latitude numeric(18,0),
 	longitude numeric(18,0)
 );
 
@@ -31,22 +31,22 @@ CREATE TABLE IF NOT EXISTS public.songs (
 CREATE TABLE IF NOT EXISTS public.staging_events (
 	artist varchar(256),
 	auth varchar(256),
-	firstname varchar(256),
+	firstName varchar(256),
 	gender varchar(256),
-	iteminsession int4,
-	lastname varchar(256),
+	itemInSession int4,
+	lastName varchar(256),
 	length numeric(18,0),
 	"level" varchar(256),
 	location varchar(256),
 	"method" varchar(256),
 	page varchar(256),
 	registration numeric(18,0),
-	sessionid int4,
+	sessionId int4,
 	song varchar(256),
 	status int4,
 	ts int8,
-	useragent varchar(256),
-	userid int4
+	userAgent varchar(256),
+	userId int4
 );
 
 CREATE TABLE IF NOT EXISTS public.staging_songs (
@@ -81,8 +81,3 @@ CREATE TABLE IF NOT EXISTS public.users (
 	"level" varchar(256),
 	CONSTRAINT users_pkey PRIMARY KEY (userid)
 );
-
-
-
-
-
